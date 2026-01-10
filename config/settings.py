@@ -156,6 +156,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 
+AUTH_USER_MODEL = 'accounts.User'
+
+
 
 LANGUAGE_CODE = 'en-us'
 
