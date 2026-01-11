@@ -94,8 +94,31 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'first_name','last_name','avatar','bio'
         )
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data): #instance - текущий объект пользователя
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
         return instance
+    
+class ChangePasswordSerializer(serializers.Serializer):
+    """Сериализатор для смены пароля"""
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(
+        required= True,
+        validators=[validate_password])
+
+    def validate_old_password(self,value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('old password is not correct')
+        return value
+    def validate(self,attrs):
+        if attrs['new_password'] != attrs['new_password']:
+            raise serializers.ValidationError(
+                {'new_password': 'Password fields didnt match.'}
+            )
+    def save(self):
+         user = self.context['request'].user
+         user.set_password(self.validated_data['new_password'])
+         return user
+       
